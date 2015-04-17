@@ -4,6 +4,8 @@ This package is used for go codes to get MegaRaid stat.
 
 ### Usage
 
+*At first, you need install MegaRAID in your servers.*
+
 Create a DiskStatus struct by calling diskutil.NewDiskStatus(). You need provide the MegaCli binary path and the count of RAID card in your server.
 
 ```
@@ -28,15 +30,40 @@ After calling ds.Get(), you can visit any stat in the DiskStatus like this:
 		fmt.Printf("adapter #%d \n", i)
 		for j, pds := range ads.PhysicalDriveStats {
 			pdStatus := pds.FirmwareState
-			fmt.Printf("PD%d status: %s\n", j, pdStatus)
+			pdName := []string{pds.Brand, pds.Model, pds.SerialNumber}
+			pdSN := strings.Join(pdName, " ")
+			fmt.Printf("PD%d: %s status: %s\n", j, pdSN, pdStatus)
 		}
 		fmt.Printf("\n")
 	}
 ```
 
-Or print the DiskStatus in json format:
+If you focus on the disk which is broken, you can use ListBrokenDrive() to get them:
 
 ```
+	brokenVds, brokenPds, err := ds.ListBrokenDrive()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "DiskStatus ListBrokenDrive error: %v\n", err)
+		return
+	}
+	for _, bvd := range brokenVds {
+		fmt.Println(bvd)
+	}
+	for _, bpd := range brokenPds {
+		fmt.Println(bpd)
+	}
+```
+
+Or you can print the DiskStatus in json format:
+
+```
+	jsonStatus, err := ds.ToJson()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "DiskStatus ToJson error: %v\n", err)
+		return
+	}
+	fmt.Println(jsonStatus)
+
 {
 	"adapter_stats": [
 		{

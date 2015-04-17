@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/buaazp/diskutil"
 	"os"
+	"strings"
 )
 
 var (
@@ -35,9 +36,23 @@ func main() {
 		fmt.Printf("adapter #%d \n", i)
 		for j, pds := range ads.PhysicalDriveStats {
 			pdStatus := pds.FirmwareState
-			fmt.Printf("PD%d status: %s\n", j, pdStatus)
+			pdName := []string{pds.Brand, pds.Model, pds.SerialNumber}
+			pdSN := strings.Join(pdName, " ")
+			fmt.Printf("PD%d: %s status: %s\n", j, pdSN, pdStatus)
 		}
 		fmt.Printf("\n")
+	}
+
+	brokenVds, brokenPds, err := ds.ListBrokenDrive()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "DiskStatus ListBrokenDrive error: %v\n", err)
+		return
+	}
+	for _, bvd := range brokenVds {
+		fmt.Println(bvd)
+	}
+	for _, bpd := range brokenPds {
+		fmt.Println(bpd)
 	}
 
 	jsonStatus, err := ds.ToJson()

@@ -43,6 +43,7 @@ type DiskStatus struct {
 	AdapterStats []AdapterStat `json:"adapter_stats"`
 }
 
+// String() is used to get the print string.
 func (d *DiskStatus) String() string {
 	data, err := json.Marshal(d)
 	if err != nil {
@@ -51,20 +52,29 @@ func (d *DiskStatus) String() string {
 	return string(data)
 }
 
+// ToJson() is used to get the json encoded string.
+func (d *DiskStatus) ToJson() (string, error) {
+	data, err := json.Marshal(d)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
 func fileExist(filename string) bool {
 	_, err := os.Stat(filename)
 	return err == nil || os.IsExist(err)
 }
 
 // NewDiskStatus() use the megaCliPath and apapterCount to build a DiskStatus.
-func NewDiskStatus(mp string, ac int) (*DiskStatus, error) {
-	mp = path.Clean(mp)
-	if !fileExist(mp) {
+func NewDiskStatus(megaCliPath string, adapterCount int) (*DiskStatus, error) {
+	megaCliPath = path.Clean(megaCliPath)
+	if !fileExist(megaCliPath) {
 		return nil, errors.New("megaCli not exist")
 	}
 	ds := new(DiskStatus)
-	ds.megacliPath = mp
-	ds.adapterCount = ac
+	ds.megacliPath = megaCliPath
+	ds.adapterCount = adapterCount
 	return ds, nil
 }
 
@@ -91,20 +101,21 @@ func execCmd(command, args string) (string, error) {
 
 // Get() is used to get all the stat of a DiskStatus.
 func (d *DiskStatus) Get() error {
-	// command := "/opt/MegaRAID/MegaCli/MegaCli64"
-	command := d.megacliPath
 	ads := make([]AdapterStat, 0)
 
+	command := d.megacliPath
 	for i := 0; i < d.adapterCount; i++ {
 		ad := AdapterStat{
 			AdapterId: i,
 		}
 		err := ad.getMegaRaidVdInfo(command)
 		if err != nil {
+			d.AdapterStats = nil
 			return err
 		}
 		err = ad.getMegaRaidPdInfo(command)
 		if err != nil {
+			d.AdapterStats = nil
 			return err
 		}
 		ads = append(ads, ad)
@@ -116,16 +127,16 @@ func (d *DiskStatus) Get() error {
 
 // GetVirtualDrive() is used to get the VirtualDriveStat of a DiskStatus.
 func (d *DiskStatus) GetVirtualDrive() error {
-	// command := "/opt/MegaRAID/MegaCli/MegaCli64"
-	command := d.megacliPath
 	ads := make([]AdapterStat, 0)
 
+	command := d.megacliPath
 	for i := 0; i < d.adapterCount; i++ {
 		ad := AdapterStat{
 			AdapterId: i,
 		}
 		err := ad.getMegaRaidVdInfo(command)
 		if err != nil {
+			d.AdapterStats = nil
 			return err
 		}
 		ads = append(ads, ad)
@@ -137,16 +148,16 @@ func (d *DiskStatus) GetVirtualDrive() error {
 
 // GetPhysicalDrive() is used to get the PhysicalDriveStat of a DiskStatus.
 func (d *DiskStatus) GetPhysicalDrive() error {
-	// command := "/opt/MegaRAID/MegaCli/MegaCli64"
-	command := d.megacliPath
 	ads := make([]AdapterStat, 0)
 
+	command := d.megacliPath
 	for i := 0; i < d.adapterCount; i++ {
 		ad := AdapterStat{
 			AdapterId: i,
 		}
 		err := ad.getMegaRaidPdInfo(command)
 		if err != nil {
+			d.AdapterStats = nil
 			return err
 		}
 		ads = append(ads, ad)
@@ -156,11 +167,53 @@ func (d *DiskStatus) GetPhysicalDrive() error {
 	return nil
 }
 
-// ToJson() is used to get the json encoded string of a DiskStatus.
-func (d *DiskStatus) ToJson() (string, error) {
-	data, err := json.Marshal(d)
+// ListBrokenDrive() is used to list the Broken Drives of a DiskStatus.
+func (d *DiskStatus) ListBrokenDrive() ([]VirtualDriveStat, []PhysicalDriveStat, error) {
+	brokenVds, err := d.ListBrokenVirtualDrive()
 	if err != nil {
-		return "", err
+		return nil, nil, err
 	}
-	return string(data), nil
+
+	brokenPds, err := d.ListBrokenPhysicalDrive()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return brokenVds, brokenPds, nil
+}
+
+// ListBrokenVirtualDrive() is used to list the Broken Virtual Drives of a DiskStatus.
+func (d *DiskStatus) ListBrokenVirtualDrive() ([]VirtualDriveStat, error) {
+	err := d.GetVirtualDrive()
+	if err != nil {
+		return nil, err
+	}
+
+	brokenVds := make([]VirtualDriveStat, 0)
+	for _, ads := range d.AdapterStats {
+		for _, vds := range ads.VirtualDriveStats {
+			if vds.State != "Optimal" {
+				brokenVds = append(brokenVds, vds)
+			}
+		}
+	}
+	return brokenVds, nil
+}
+
+// ListBrokenPhysicalDrive() is used to list the Broken Physical Drives of a DiskStatus.
+func (d *DiskStatus) ListBrokenPhysicalDrive() ([]PhysicalDriveStat, error) {
+	err := d.GetPhysicalDrive()
+	if err != nil {
+		return nil, err
+	}
+
+	brokenPds := make([]PhysicalDriveStat, 0)
+	for _, ads := range d.AdapterStats {
+		for _, pds := range ads.PhysicalDriveStats {
+			if !strings.Contains(pds.FirmwareState, "Online") {
+				brokenPds = append(brokenPds, pds)
+			}
+		}
+	}
+	return brokenPds, nil
 }

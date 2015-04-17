@@ -1,6 +1,7 @@
 package diskutil
 
 import (
+	"encoding/json"
 	"strings"
 )
 
@@ -19,6 +20,24 @@ type PhysicalDriveStat struct {
 	Model                  string `json:"model"`
 	SerialNumber           string `json:"serial_number"`
 	DriveTemperature       string `json:"drive_emperature"`
+}
+
+// String() is used to get the print string.
+func (p *PhysicalDriveStat) String() string {
+	data, err := json.Marshal(p)
+	if err != nil {
+		return err.Error()
+	}
+	return string(data)
+}
+
+// ToJson() is used to get the json encoded string.
+func (p *PhysicalDriveStat) ToJson() (string, error) {
+	data, err := json.Marshal(p)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
 }
 
 func (p *PhysicalDriveStat) parseLine(line string) error {
