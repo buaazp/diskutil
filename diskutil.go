@@ -79,8 +79,6 @@ func NewDiskStatus(megaCliPath string, adapterCount int) (*DiskStatus, error) {
 }
 
 func execCmd(command, args string) (string, error) {
-	// fmt.Println("Command: ", command)
-	// fmt.Println("Arguments: ", args)
 	var argArray []string
 	if args != "" {
 		argArray = strings.Split(args, " ")
@@ -95,7 +93,6 @@ func execCmd(command, args string) (string, error) {
 		return "", err
 	}
 
-	// fmt.Fprintf(os.Stdout, "Result: %s", buf)
 	return string(buf), nil
 }
 
