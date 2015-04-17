@@ -4,6 +4,8 @@ This package is used for go codes to get MegaRaid stat.
 
 ### Usage
 
+Create a DiskStatus struct by calling diskutil.NewDiskStatus(). You need provide the MegaCli binary path and the count of RAID card in your server.
+
 ```
     ds, err := diskutil.NewDiskStatus("/opt/MegaRAID/MegaCli/MegaCli64", 1)
     if err != nil {
@@ -20,18 +22,76 @@ This package is used for go codes to get MegaRaid stat.
     fmt.Println(ds)
 ```
 
-Full sample code is in examples.
+After calling ds.Get(), you can visit any stat in the DiskStatus like this:
+
+```
+	for i, ads := range ds.AdapterStats {
+		fmt.Printf("adapter #%d \n", i)
+		for j, pds := range ads.PhysicalDriveStats {
+			pdStatus := pds.FirmwareState
+			fmt.Printf("PD%d status: %s\n", j, pdStatus)
+		}
+		fmt.Printf("\n")
+	}
+```
+
+Or print the DiskStatus in json format:
+
+```
+{
+    "adapter_stats": [
+        {
+            "id": 0, 
+            "virtual_drive_stats": [
+                {
+                    "virtual_drive": 0, 
+                    "name": "", 
+                    "size": "278.875 GB", 
+                    "state": "Optimal", 
+                    "number_of_drives": 1, 
+                    "encryption_type": "None"
+                }
+            ], 
+            "physical_drive_stats": [
+                {
+                    "enclosure_device_id": 64, 
+                    "device_id": 8, 
+                    "slot_number": 0, 
+                    "media_error_count": 0, 
+                    "other_error_count": 0, 
+                    "predictive_failure_count": 0, 
+                    "pd_type": "SAS", 
+                    "raw_size": "279.396 GB [0x22ecb25c Sectors]", 
+                    "firmware_state": "Online, Spun Up", 
+                    "brand": "SEAGATE", 
+                    "model": "ST9300605SS", 
+                    "serial_number": "00046XP4MQNJ", 
+                    "drive_emperature": "65C (149.00 F)"
+                }
+            ]
+        }
+    ]
+}
+```
+
+Full sample code is in /examples. Try it to test this package:
+
+```
+go build -v examples/printDiskStat.go
+sudo ./printDiskStat
+```
 
 ### GoDoc
+
+Visit Godoc to get full api documents:
 
 [https://godoc.org/github.com/buaazp/diskutil](https://godoc.org/github.com/buaazp/diskutil) 
 
 ### Issue
 
-If you meet some problem in your servers, please create a github issue or contact me:
+If you meet some problems in your servers, please create a github [issue](https://github.com/buaazp/diskutil/issues) or contact me:
 
-weibo: [@招牌疯子](http://weibo.com/buaazp)
-
+weibo: [@招牌疯子](http://weibo.com/buaazp)  
 mail: zp@buaa.us
 
 

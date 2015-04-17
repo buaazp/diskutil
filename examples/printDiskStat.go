@@ -31,5 +31,19 @@ func main() {
 		return
 	}
 
-	fmt.Println(ds)
+	for i, ads := range ds.AdapterStats {
+		fmt.Printf("adapter #%d \n", i)
+		for j, pds := range ads.PhysicalDriveStats {
+			pdStatus := pds.FirmwareState
+			fmt.Printf("PD%d status: %s\n", j, pdStatus)
+		}
+		fmt.Printf("\n")
+	}
+
+	jsonStatus, err := ds.ToJson()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "DiskStatus ToJson error: %v\n", err)
+		return
+	}
+	fmt.Println(jsonStatus)
 }
