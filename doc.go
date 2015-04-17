@@ -1,22 +1,22 @@
 /*
-
 This package is used for go codes to get MegaRaid stat.
+
+Usage
 
 Create a DiskStatus struct by calling diskutil.NewDiskStatus(). You need provide the MegaCli binary path and the count of RAID card in your server.
 
-    ds, err := diskutil.NewDiskStatus("/opt/MegaRAID/MegaCli/MegaCli64", 1)
-    if err != nil {
-        fmt.Fprintf(os.Stderr, "DiskStatus New error: %v\n", err)
-        return
-    }
+	ds, err := diskutil.NewDiskStatus(megaPath, adapterCount)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "DiskStatus New error: %v\n", err)
+		return
+	}
 
-    err = ds.Get()
-    if err != nil {
-        fmt.Fprintf(os.Stderr, "DiskStatus Get error: %v\n", err)
-        return
-    }
-
-    fmt.Println(ds)
+	err = ds.Get()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "DiskStatus Get error: %v\n", err)
+		return
+	}
+	fmt.Println(ds)
 
 After calling ds.Get(), you can visit any stat in the DiskStatus like this:
 
