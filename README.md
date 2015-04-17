@@ -6,7 +6,7 @@ This package is used for go codes to get MegaRaid stat.
 
 *At first, you need install MegaRAID in your servers.*
 
-Create a DiskStatus struct by calling diskutil.NewDiskStatus(). You need provide the MegaCli binary path and the count of RAID card in your server.
+Create a DiskStatus struct by calling `diskutil.NewDiskStatus()`. You need provide the MegaCli binary path and the count of RAID card in your server.
 
 ```
 	ds, err := diskutil.NewDiskStatus(megaPath, adapterCount)
@@ -23,7 +23,7 @@ Create a DiskStatus struct by calling diskutil.NewDiskStatus(). You need provide
 	fmt.Println(ds)
 ```
 
-After calling ds.Get(), you can visit any stat in the DiskStatus like this:
+After calling `Get()`, you can visit any stat in the DiskStatus like this:
 
 ```
 	for i, ads := range ds.AdapterStats {
@@ -38,7 +38,7 @@ After calling ds.Get(), you can visit any stat in the DiskStatus like this:
 	}
 ```
 
-If you focus on the disk which is broken, you can use ListBrokenDrive() to get them:
+If you focus on the disk which is broken, you can use `ListBrokenDrive()` to get them:
 
 ```
 	brokenVds, brokenPds, err := ds.ListBrokenDrive()
@@ -54,7 +54,7 @@ If you focus on the disk which is broken, you can use ListBrokenDrive() to get t
 	}
 ```
 
-Or you can print the DiskStatus in json format:
+Or you can print the DiskStatus in json format by calling `ToJson()`:
 
 ```
 	jsonStatus, err := ds.ToJson()
@@ -64,40 +64,40 @@ Or you can print the DiskStatus in json format:
 	}
 	fmt.Println(jsonStatus)
 
-{
-	"adapter_stats": [
-		{
-			"id": 0, 
-			"virtual_drive_stats": [
-				{
-					"virtual_drive": 0, 
-					"name": "", 
-					"size": "278.875 GB", 
-					"state": "Optimal", 
-					"number_of_drives": 1, 
-					"encryption_type": "None"
-				}
-			], 
-			"physical_drive_stats": [
-				{
-					"enclosure_device_id": 64, 
-					"device_id": 8, 
-					"slot_number": 0, 
-					"media_error_count": 0, 
-					"other_error_count": 0, 
-					"predictive_failure_count": 0, 
-					"pd_type": "SAS", 
-					"raw_size": "279.396 GB [0x22ecb25c Sectors]", 
-					"firmware_state": "Online, Spun Up", 
-					"brand": "SEAGATE", 
-					"model": "ST9300605SS", 
-					"serial_number": "00046XP4MQNJ", 
-					"drive_emperature": "65C (149.00 F)"
-				}
-			]
-		}
-	]
-}
+	{
+		"adapter_stats": [
+			{
+				"id": 0, 
+				"virtual_drive_stats": [
+					{
+						"virtual_drive": 0, 
+						"name": "", 
+						"size": "278.875 GB", 
+						"state": "Optimal", 
+						"number_of_drives": 1, 
+						"encryption_type": "None"
+					}
+				], 
+				"physical_drive_stats": [
+					{
+						"enclosure_device_id": 64, 
+						"device_id": 8, 
+						"slot_number": 0, 
+						"media_error_count": 0, 
+						"other_error_count": 0, 
+						"predictive_failure_count": 0, 
+						"pd_type": "SAS", 
+						"raw_size": "279.396 GB [0x22ecb25c Sectors]", 
+						"firmware_state": "Online, Spun Up", 
+						"brand": "SEAGATE", 
+						"model": "ST9300605SS", 
+						"serial_number": "00046XP4MQNJ", 
+						"drive_emperature": "65C (149.00 F)"
+					}
+				]
+			}
+		]
+	}
 ```
 
 Full sample code is in /examples. Try it to test this package:
