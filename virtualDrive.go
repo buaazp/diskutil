@@ -1,6 +1,7 @@
 package diskutil
 
 import (
+	"encoding/json"
 	"errors"
 	"strings"
 )
@@ -13,6 +14,24 @@ type VirtualDriveStat struct {
 	State          string `json:"state"`
 	NumberOfDrives int    `json:"number_of_drives"`
 	Encryptiontype string `json:"encryption_type"`
+}
+
+// String() is used to get the print string.
+func (v *VirtualDriveStat) String() string {
+	data, err := json.Marshal(v)
+	if err != nil {
+		return err.Error()
+	}
+	return string(data)
+}
+
+// ToJson() is used to get the json encoded string.
+func (v *VirtualDriveStat) ToJson() (string, error) {
+	data, err := json.Marshal(v)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
 }
 
 func (v *VirtualDriveStat) parseLine(line string) error {
