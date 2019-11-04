@@ -13,6 +13,8 @@ import (
 const (
 	keyExitResult               string = "Exit Code:"
 	keyVdVirtualDrive           string = "Virtual Drive"
+	keyVdVirtualDriveSpace      string = "\n\n\n"
+	keyVdVirtualDriveType       string = "Virtual Drive Type"
 	keyVdTargetId               string = "Target Id"
 	keyVdName                   string = "Name"
 	keyVdSize                   string = "Size"
@@ -30,6 +32,7 @@ const (
 	keyPdFirmwareState          string = "Firmware state"
 	keyPdInquiryData            string = "Inquiry Data"
 	keyPdDriveTemperature       string = "Drive Temperature"
+	keyRAIDLevel                string = "RAID Level"
 
 	typeString int = iota
 	typeInt
@@ -89,7 +92,7 @@ func execCmd(command, args string) (string, error) {
 	cmd := exec.Command(command, argArray...)
 	buf, err := cmd.Output()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "The command failed to perform: %s (Command: %s, Arguments: %s)", err, command, args)
+		_, _ = fmt.Fprintf(os.Stderr, "The command failed to perform: %s (Command: %s, Arguments: %s)", err, command, args)
 		return "", err
 	}
 
@@ -101,7 +104,7 @@ func (d *DiskStatus) Get() error {
 	ads := make([]AdapterStat, 0)
 
 	command := d.megacliPath
-	for i := 0; i < d.adapterCount; i++ {
+	for i := 0; i <= d.adapterCount; i++ {
 		ad := AdapterStat{
 			AdapterId: i,
 		}

@@ -14,6 +14,7 @@ type VirtualDriveStat struct {
 	State          string `json:"state"`
 	NumberOfDrives int    `json:"number_of_drives"`
 	Encryptiontype string `json:"encryption_type"`
+	RAIDLevel      string `json:"raid_level"`
 }
 
 // String() is used to get the print string.
@@ -45,7 +46,7 @@ func (v *VirtualDriveStat) parseLine(line string) error {
 			return err
 		}
 		v.VirtualDrive = virtualDrive.(int)
-	} else if strings.HasPrefix(line, keyVdName) {
+	} else if strings.HasPrefix(line, keyVdName) || strings.HasPrefix(line, keyVdVirtualDriveType) {
 		name, err := parseFiled(line, keyVdName, typeString)
 		if err != nil {
 			return err
@@ -57,6 +58,12 @@ func (v *VirtualDriveStat) parseLine(line string) error {
 			return err
 		}
 		v.Size = size.(string)
+	} else if strings.HasPrefix(line, keyRAIDLevel) {
+		size, err := parseFiled(line, keyRAIDLevel, typeString)
+		if err != nil {
+			return err
+		}
+		v.RAIDLevel = size.(string)
 	} else if strings.HasPrefix(line, keyVdState) {
 		state, err := parseFiled(line, keyVdState, typeString)
 		if err != nil {

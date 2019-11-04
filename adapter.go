@@ -39,8 +39,8 @@ func (a *AdapterStat) parseMegaRaidVdInfo(info string) error {
 	}
 
 	vds := make([]VirtualDriveStat, 0)
+	parts := strings.Split(info, keyVdVirtualDriveSpace)
 
-	parts := strings.Split(info, keyVdVirtualDrive)
 	for _, vdinfo := range parts {
 		if strings.Contains(vdinfo, keyVdTargetId) {
 			vdinfo = keyVdVirtualDrive + vdinfo
@@ -49,7 +49,7 @@ func (a *AdapterStat) parseMegaRaidVdInfo(info string) error {
 			for _, line := range lines {
 				err := vd.parseLine(line)
 				if err != nil {
-					return err
+					continue
 				}
 			}
 			vds = append(vds, vd)
@@ -62,11 +62,12 @@ func (a *AdapterStat) parseMegaRaidVdInfo(info string) error {
 
 func (a *AdapterStat) getMegaRaidVdInfo(command string) error {
 	args := "-ldinfo -lall -a" + strconv.Itoa(a.AdapterId)
-
 	output, err := execCmd(command, args)
+
 	if err != nil {
 		return err
 	}
+
 	parts := strings.SplitN(output, keyExitResult, 2)
 	if len(parts) != 2 {
 		return errors.New("megaCli output illegal")
@@ -76,7 +77,7 @@ func (a *AdapterStat) getMegaRaidVdInfo(command string) error {
 		return errors.New("megaCli return error: " + result)
 	}
 
-	err = a.parseMegaRaidVdInfo(output)
+	err = a.parseMegaRaidVdInfo(parts[0])
 	if err != nil {
 		return err
 	}
@@ -99,7 +100,7 @@ func (a *AdapterStat) parseMegaRaidPdInfo(info string) error {
 			for _, line := range lines {
 				err := pd.parseLine(line)
 				if err != nil {
-					return err
+					continue
 				}
 			}
 			pds = append(pds, pd)
@@ -112,8 +113,8 @@ func (a *AdapterStat) parseMegaRaidPdInfo(info string) error {
 
 func (a *AdapterStat) getMegaRaidPdInfo(command string) error {
 	args := "-pdlist -a" + strconv.Itoa(a.AdapterId)
-
 	output, err := execCmd(command, args)
+
 	if err != nil {
 		return err
 	}
@@ -130,5 +131,6 @@ func (a *AdapterStat) getMegaRaidPdInfo(command string) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

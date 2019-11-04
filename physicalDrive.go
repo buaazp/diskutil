@@ -102,7 +102,11 @@ func (p *PhysicalDriveStat) parseLine(line string) error {
 		}
 		inquiryStr := inquiryData.(string)
 		parts := strings.Fields(inquiryStr)
-		if len(parts) == 3 {
+		if len(parts) == 4 {
+			p.SerialNumber = parts[2]
+			p.Model = parts[3]
+			p.Brand = parts[1]
+		} else if len(parts) == 3 {
 			p.SerialNumber = parts[2]
 			p.Model = parts[1]
 			p.Brand = parts[0]
