@@ -99,6 +99,21 @@ func execCmd(command, args string) (string, error) {
 	return string(buf), nil
 }
 
+func (d *DiskStatus) Log() ([]string, error) {
+	logs := make([]string, 0)
+
+	for i := 0; i <= d.adapterCount; i++ {
+		ad := AdapterStat{
+			AdapterId: i,
+		}
+		if log, err := ad.getLog(d.megacliPath); err == nil {
+			logs = append(logs, log)
+		}
+	}
+
+	return logs, nil
+}
+
 // Get() is used to get all the stat of a DiskStatus.
 func (d *DiskStatus) Get() error {
 	ads := make([]AdapterStat, 0)

@@ -118,6 +118,7 @@ func (a *AdapterStat) getMegaRaidPdInfo(command string) error {
 	if err != nil {
 		return err
 	}
+
 	parts := strings.SplitN(output, keyExitResult, 2)
 	if len(parts) != 2 {
 		return errors.New("megaCli output illegal")
@@ -133,4 +134,13 @@ func (a *AdapterStat) getMegaRaidPdInfo(command string) error {
 	}
 
 	return nil
+}
+
+func (a *AdapterStat) getLog(cmd string) (string, error) {
+	args := "-fwtermlog -dsply -a" + strconv.Itoa(a.AdapterId)
+	if output, err := execCmd(cmd, args); err != nil {
+		return "", err
+	} else {
+		return output, nil
+	}
 }
