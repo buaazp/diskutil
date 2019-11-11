@@ -7,6 +7,9 @@ import (
 
 	"github.com/buaazp/diskutil"
 	"github.com/gin-gonic/gin"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -70,6 +73,10 @@ func main() {
 			}
 		}
 	})
+
+	// for prometheus exporter
+	prometheus.MustRegister(NewMegaCollector(ds))
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	_ = r.Run(listenAddress)
 }
