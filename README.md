@@ -117,10 +117,10 @@ go build -o megaraid ./cmd
 
 then `./megaraid` and visit `localhost:9101` in default config.
 
-- http://localhost:9101/log // global log in text/plain
-- http://localhost:9101/metrics // promethues exporter
-- http://localhost:9101/virtual-drive-stats // virual drive status in json format
-- http://localhost:9101/physical-drive-stats // physical drive status in json formats
+- <http://localhost:9101/log> // global log in text/plain
+- <http://localhost:9101/metrics> // promethues exporter
+- <http://localhost:9101/virtual-drive-stats> // virual drive status in json format
+- <http://localhost:9101/physical-drive-stats> // physical drive status in json formats
 
 for more information, pls check source file.
 

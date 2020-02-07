@@ -5,31 +5,18 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/buaazp/diskutil"
 	"github.com/gin-gonic/gin"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-var (
-	megaPath      string
-	adapterCount  int
-	listenAddress string
-)
-
-func init() {
-	flag.StringVar(&megaPath, "mega-path", "/opt/MegaRAID/MegaCli/MegaCli64", "megaCli binary path")
-	flag.IntVar(&adapterCount, "adapter", 0, "adapter count in your server")
-	flag.StringVar(&listenAddress, "listen-address", "0.0.0.0:9101", "server listen address")
-}
-
 func main() {
 	flag.Parse()
 
-	ds, err := diskutil.NewDiskStatus(megaPath, adapterCount)
+	ds, err := GetDiskStatus()
 	if err != nil {
-		log.Fatalf("DiskStatus New error: %v\n", err)
+		log.Fatalf("DiskStatus error: %v\n", err)
 	}
 
 	r := gin.Default()
