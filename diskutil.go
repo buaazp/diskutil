@@ -74,7 +74,7 @@ func (d *DiskStatus) ListBrokenVirtualDrive() ([]VirtualDriveStat, error) {
 	brokenVds := make([]VirtualDriveStat, 0)
 	for _, ads := range d.AdapterStats {
 		for _, vds := range ads.VirtualDriveStats {
-			if vds.State != "Optimal" {
+			if strings.ToLower(vds.State) != "optimal" {
 				brokenVds = append(brokenVds, vds)
 			}
 		}
@@ -92,7 +92,7 @@ func (d *DiskStatus) ListBrokenPhysicalDrive() ([]PhysicalDriveStat, error) {
 	brokenPds := make([]PhysicalDriveStat, 0)
 	for _, ads := range d.AdapterStats {
 		for _, pds := range ads.PhysicalDriveStats {
-			if !strings.Contains(pds.FirmwareState, "Online") {
+			if !strings.Contains(strings.ToLower(pds.FirmwareState), "online") {
 				brokenPds = append(brokenPds, pds)
 			}
 		}
