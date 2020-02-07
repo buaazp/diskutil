@@ -1,5 +1,11 @@
 package main
 
+import (
+	"flag"
+
+	"github.com/buaazp/diskutil"
+)
+
 var (
 	megaPath      string
 	adapterCount  int

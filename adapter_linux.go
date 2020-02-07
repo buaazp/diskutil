@@ -1,5 +1,11 @@
 package diskutil
 
+import (
+	"errors"
+	"strconv"
+	"strings"
+)
+
 func (a *AdapterStat) parseMegaRaidVdInfo(info string) error {
 	if info == "" {
 		return errors.New("mageRaid vd info nil")

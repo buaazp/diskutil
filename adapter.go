@@ -7,7 +7,7 @@ import (
 // AdapterStat is a struct to get the Adapter Stat of a RAID card.
 // AdapterStat has VirtualDriveStats and PhysicalDriveStats in itself.
 type AdapterStat struct {
-	// AdapterId          int                 `json:"adapter_id"`
+	AdapterId          int                 `json:"adapter_id"`
 	VirtualDriveStats  []VirtualDriveStat  `json:"virtual_drive_stats"`
 	PhysicalDriveStats []PhysicalDriveStat `json:"physical_drive_stats"`
 }

@@ -1,5 +1,10 @@
 package diskutil
 
+import (
+	"errors"
+	"path"
+)
+
 const (
 	keyExitResult               string = "Exit Code:"
 	keyVdVirtualDrive           string = "Virtual Drive"
