@@ -4,7 +4,7 @@ This package is used for go codes to get MegaRaid stat.
 
 ### Usage
 
-_At first, you need install MegaRAID in your servers._
+_ At first, you need install MegaRAID in your servers. NOTICE: MegaRaid will using mfiutil when you running FreeBSD. _
 
 Create a DiskStatus struct by calling `diskutil.NewDiskStatus()`. You need provide the MegaCli binary path and the count of RAID card in your server.
 
@@ -117,10 +117,10 @@ go build -o megaraid ./cmd
 
 then `./megaraid` and visit `localhost:9101` in default config.
 
-- http://localhost:9101/log // global log in text/plain
-- http://localhost:9101/metrics // promethues exporter
-- http://localhost:9101/virtual-drive-stats // virual drive status in json format
-- http://localhost:9101/physical-drive-stats // physical drive status in json formats
+- <http://localhost:9101/log> // global debug log in text/plain
+- <http://localhost:9101/metrics> // promethues exporter
+- <http://localhost:9101/virtual-drive-stats> // virual drive status in json format
+- <http://localhost:9101/physical-drive-stats> // physical drive status in json formats
 
 for more information, pls check source file.
 
