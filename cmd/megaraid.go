@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
@@ -43,6 +44,27 @@ func main() {
 		} else {
 			for _, ads := range ds.AdapterStats {
 				c.JSON(http.StatusOK, ads.VirtualDriveStats)
+			}
+		}
+	})
+
+	r.GET("/broken/:type/", func(c *gin.Context) {
+		if err := ds.Get(); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+		} else {
+			if volumes, drives, err := ds.ListBrokenDrive(); err != nil {
+				_ = c.AbortWithError(http.StatusInternalServerError, err)
+			} else {
+				switch strings.ToLower(c.Param("type")) {
+				case "volumes":
+					c.JSON(http.StatusOK, volumes)
+				case "drives":
+					c.JSON(http.StatusOK, drives)
+				default:
+					c.JSON(http.StatusNotFound, nil)
+				}
 			}
 		}
 	})
