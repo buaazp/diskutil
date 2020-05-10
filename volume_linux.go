@@ -1,38 +1,9 @@
 package diskutil
 
 import (
-	"encoding/json"
 	"errors"
 	"strings"
 )
-
-// VirtualDriveStat is a struct to get the Virtual Drive Stat of a RAID card.
-type VirtualDriveStat struct {
-	VirtualDrive   int    `json:"virtual_drive"`
-	Name           string `json:"name"`
-	Size           string `json:"size"`
-	State          string `json:"state"`
-	NumberOfDrives int    `json:"number_of_drives"`
-	Encryptiontype string `json:"encryption_type"`
-}
-
-// String() is used to get the print string.
-func (v *VirtualDriveStat) String() string {
-	data, err := json.Marshal(v)
-	if err != nil {
-		return err.Error()
-	}
-	return string(data)
-}
-
-// ToJson() is used to get the json encoded string.
-func (v *VirtualDriveStat) ToJson() (string, error) {
-	data, err := json.Marshal(v)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
 
 func (v *VirtualDriveStat) parseLine(line string) error {
 	if strings.HasPrefix(line, keyVdVirtualDrive) {
@@ -45,7 +16,7 @@ func (v *VirtualDriveStat) parseLine(line string) error {
 			return err
 		}
 		v.VirtualDrive = virtualDrive.(int)
-	} else if strings.HasPrefix(line, keyVdName) {
+	} else if strings.HasPrefix(line, keyVdName) || strings.HasPrefix(line, keyVdVirtualDriveType) {
 		name, err := parseFiled(line, keyVdName, typeString)
 		if err != nil {
 			return err
@@ -57,6 +28,12 @@ func (v *VirtualDriveStat) parseLine(line string) error {
 			return err
 		}
 		v.Size = size.(string)
+	} else if strings.HasPrefix(line, keyRAIDLevel) {
+		size, err := parseFiled(line, keyRAIDLevel, typeString)
+		if err != nil {
+			return err
+		}
+		v.RAIDLevel = size.(string)
 	} else if strings.HasPrefix(line, keyVdState) {
 		state, err := parseFiled(line, keyVdState, typeString)
 		if err != nil {

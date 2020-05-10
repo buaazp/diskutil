@@ -3,9 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/buaazp/diskutil"
 	"os"
 	"strings"
+
+	"github.com/buaazp/diskutil"
 )
 
 var (
@@ -15,20 +16,20 @@ var (
 
 func init() {
 	flag.StringVar(&megaPath, "mega-path", "/opt/MegaRAID/MegaCli/MegaCli64", "megaCli binary path")
-	flag.IntVar(&adapterCount, "adapter-count", 1, "adapter count in your server")
+	flag.IntVar(&adapterCount, "adapter-count", 0, "adapter count in your server")
 }
 
 func main() {
 	flag.Parse()
 	ds, err := diskutil.NewDiskStatus(megaPath, adapterCount)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "DiskStatus New error: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "DiskStatus New error: %v\n", err)
 		return
 	}
 
 	err = ds.Get()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "DiskStatus Get error: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "DiskStatus Get error: %v\n", err)
 		return
 	}
 
@@ -38,14 +39,14 @@ func main() {
 			pdStatus := pds.FirmwareState
 			pdName := []string{pds.Brand, pds.Model, pds.SerialNumber}
 			pdSN := strings.Join(pdName, " ")
-			fmt.Printf("PD%d: %s status: %s\n", j, pdSN, pdStatus)
+			fmt.Printf("PD%d: %s status: %s size %s\n", j, pdSN, pdStatus, pds.RawSize)
 		}
 		fmt.Printf("\n")
 	}
 
 	brokenVds, brokenPds, err := ds.ListBrokenDrive()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "DiskStatus ListBrokenDrive error: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "DiskStatus ListBrokenDrive error: %v\n", err)
 		return
 	}
 	for _, bvd := range brokenVds {
@@ -57,7 +58,7 @@ func main() {
 
 	jsonStatus, err := ds.ToJson()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "DiskStatus ToJson error: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "DiskStatus ToJson error: %v\n", err)
 		return
 	}
 	fmt.Println(jsonStatus)
